@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KICK & FIT — одежда из Гуанчжоу, Крым</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{ box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; margin:0; padding:0 }
+html{ scroll-behavior:smooth }
+body{ background:#0A0A0A; color:#F8F8F8; font-family:'Manrope',sans-serif; overflow-x:hidden; min-height:100vh }
+
+/* ---------- helpers ---------- */
+.serif{ font-family:'Instrument Serif',serif }
+.mono{ font-family:'JetBrains Mono',monospace }
+.container{ max-width:1280px; margin:0 auto; padding-left:24px; padding-right:24px }
+a{ text-decoration:none; color:inherit }
+@media(min-width:640px){ .container{ padding-left:32px; padding-right:32px } }
+
+/* ---------- animations ---------- */
+.letter{ display:inline-block; opacity:0; filter:blur(18px); transform:translateY(28px) }
+.letter.in{ animation:fogIn 1.6s cubic-bezier(.22,1,.36,1) forwards }
+@keyframes fogIn{ 0%{opacity:0; filter:blur(18px); transform:translateY(28px)} 60%{opacity:.6; filter:blur(6px)} 100%{opacity:1; filter:blur(0); transform:translateY(0)} }
+.fade{ opacity:0; filter:blur(10px); transform:translateY(14px); animation:softIn 1.2s cubic-bezier(.22,1,.36,1) forwards }
+@keyframes softIn{ to{opacity:1; filter:blur(0); transform:translateY(0)} }
+.breathe{ animation:breathe 14s ease-in-out infinite alternate }
+.breathe2{ animation:breathe 18s ease-in-out infinite alternate-reverse }
+@keyframes breathe{ 0%{transform:scale(1) translate(0,0); opacity:.55} 50%{transform:scale(1.08) translate(18px,-12px); opacity:.75} 100%{transform:scale(1.03) translate(-12px,14px); opacity:.6} }
+.wave{ position:absolute; border-radius:50%; filter:blur(60px); pointer-events:none }
+.grain{ position:relative }
+.grain:before{ content:""; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"); pointer-events:none }
+
+/* ---------- interactive defaults: soft, rounded, pill ---------- */
+a, button{ transition:all .3s ease }
+.btn{ display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 28px; border-radius:999px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.08em }
+.btn-primary{ background:#F8F8F8; color:#0A0A0A }
+.btn-primary:hover{ transform:scale(1.02); background:#ffffff; box-shadow:0 0 30px rgba(248,248,248,.25) }
+.btn-ghost{ border:1.5px solid rgba(248,248,248,.18); color:#F8F8F8 }
+.btn-ghost:hover{ background:rgba(248,248,248,.10); border-color:rgba(248,248,248,.35); transform:scale(1.02) }
+.btn-sm{ height:36px; padding:0 20px; font-size:11px }
+
+.nav-link{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; color:rgba(248,248,248,.55) }
+.nav-link:hover{ color:#F8F8F8 }
+
+/* ---------- splash ---------- */
+.splash{ position:relative; width:100%; min-height:100vh; min-height:100dvh; overflow:hidden; display:flex; flex-direction:column; background:#0A0A0A }
+.splash-bg{ position:absolute; inset:0; background:radial-gradient(900px 600px at 38% 28%, #1A1A1A 0%, #0A0A0A 68%), radial-gradient(1100px 800px at 78% 78%, #1A1A1A 0%, #0A0A0A 72%) }
+.splash-vignette{ position:absolute; inset:0; pointer-events:none; background:radial-gradient(1200px 700px at 50% 52%, transparent 58%, rgba(10,10,10,.55) 100%) }
+
+.nav{ position:relative; z-index:10; height:52px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 24px; border-bottom:1px solid rgba(248,248,248,.07) }
+@media(min-width:640px){ .nav{ padding:0 32px } }
+.nav-left{ display:flex; align-items:center; gap:12px }
+.nav-logo{ width:36px; height:36px; border-radius:50%; overflow:hidden; flex-shrink:0; background:#0A0A0A; border:1.5px solid rgba(248,248,248,.85) }
+.nav-logo img{ width:100%; height:100%; object-fit:cover; display:block }
+.nav-brand{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.22em; color:rgba(248,248,248,.60); display:none }
+@media(min-width:640px){ .nav-brand{ display:inline } }
+.nav-menu{ display:none; align-items:center; gap:24px }
+@media(min-width:1024px){ .nav-menu{ display:flex } }
+.nav-geo{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em; color:rgba(248,248,248,.30); display:none }
+@media(min-width:640px){ .nav-geo{ display:block } }
+
+.hero{ position:relative; z-index:10; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px; text-align:center }
+@media(min-width:640px){ .hero{ padding:40px 32px } }
+.hero-kicker{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.26em; color:rgba(232,224,216,.70); animation-delay:.25s }
+.hero-title{ margin-top:16px; width:100%; max-width:1280px; margin-left:auto; margin-right:auto }
+.hero-line{ width:100%; overflow:hidden }
+.hero-line-text{ font-family:'Instrument Serif',serif; line-height:.82; letter-spacing:-.04em; text-align:center; white-space:nowrap; -webkit-user-select:none; user-select:none; color:#F8F8F8; font-size:clamp(56px,14vw,200px) }
+.hero-line.spaced .hero-line-text{ letter-spacing:.02em }
+.hero-desc{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.04em; line-height:24px; max-width:560px; margin-top:20px; color:rgba(248,248,248,.72); animation-delay:1.05s }
+@media(min-width:640px){ .hero-desc{ font-size:12px } }
+.hero-actions{ display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:28px; animation-delay:1.25s }
+@media(min-width:640px){ .hero-actions{ flex-direction:row } }
+.hero-hint{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.08em; color:rgba(248,248,248,.30); margin-top:12px; animation-delay:1.35s }
+.hero-meta{ display:flex; align-items:center; justify-content:center; gap:12px; margin-top:24px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; color:rgba(248,248,248,.35); animation-delay:1.45s }
+.hero-meta .dot{ width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.2) }
+.hero-side{ display:none; position:absolute; left:32px; top:50%; transform:translateY(-50%); writing-mode:vertical-rl; flex-direction:column; align-items:center; gap:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.28em; color:rgba(232,224,216,.20) }
+@media(min-width:1280px){ .hero-side{ display:flex } }
+
+/* ---------- QR / Telegram plaque (bottom-right) ---------- */
+.plaque{ position:absolute; bottom:32px; right:32px; z-index:20; transform:translateY(100px); opacity:0; transition:transform 3.0s cubic-bezier(.16,1,.3,1), opacity 2.0s ease }
+.plaque.show{ transform:translateY(0); opacity:1 }
+.plaque-card{ display:flex; align-items:center; gap:16px; padding:20px 24px; border-radius:24px; background:rgba(248,248,248,.07); border:1px solid rgba(248,248,248,.12); backdrop-filter:blur(16px) }
+.plaque-qr{ width:132px; height:132px; border-radius:10px; background:#fff; padding:6px; flex-shrink:0 }
+.plaque-qr img{ width:100%; height:100%; display:block; border-radius:6px }
+.plaque-text{ text-align:left }
+.plaque-line{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:rgba(248,248,248,.60) }
+.plaque-handle{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:#F8F8F8; margin-top:4px; transition:color .3s ease }
+.plaque-card:hover .plaque-handle{ color:#E8E0D8 }
+.plaque-link{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.05em; color:#E8E0D8; text-decoration:underline }
+
+/* ---------- catalog ---------- */
+.section{ padding:48px 0 24px }
+.section-head{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px }
+.eyebrow{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em; color:rgba(248,248,248,.40) }
+.section-title{ font-family:'Instrument Serif',serif; font-size:32px; line-height:1; margin-top:8px }
+@media(min-width:640px){ .section-title{ font-size:40px } }
+.section-sub{ font-family:'JetBrains Mono',monospace; font-size:11px; line-height:20px; color:rgba(248,248,248,.50); margin-top:8px; max-width:520px }
+.head-actions{ display:flex; gap:8px }
+
+.avito-status{ margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(232,224,216,.70) }
+.catalog-grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:24px }
+@media(min-width:640px){ .catalog-grid{ grid-template-columns:repeat(2,1fr) } }
+@media(min-width:1024px){ .catalog-grid{ grid-template-columns:repeat(3,1fr) } }
+@media(min-width:1280px){ .catalog-grid{ grid-template-columns:repeat(3,1fr) } }
+
+.card{ display:flex; gap:16px; padding:16px; border-radius:16px; background:#141414; border:1px solid rgba(248,248,248,.07); transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease }
+.card:hover{ transform:translateY(-4px); border-color:rgba(248,248,248,.18); box-shadow:0 12px 40px rgba(0,0,0,.5) }
+.card-img{ width:116px; height:108px; border-radius:10px; overflow:hidden; background:#0A0A0A; flex-shrink:0; position:relative }
+.card-img img{ width:100%; height:100%; object-fit:cover; display:block }
+.card-body{ flex:1; min-width:0; padding:4px 0 }
+.card-title{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; line-height:1.2; color:#5B8DEF }
+.card-price{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; margin-top:4px }
+.card-price .old{ font-weight:400; text-decoration:line-through; color:rgba(248,248,248,.35) }
+.card-price .disc{ font-weight:700; color:#FF5A5A }
+.card-line{ font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:4px; color:rgba(248,248,248,.65) }
+.card-line.mute{ color:rgba(248,248,248,.50) }
+.card-line.faint{ color:rgba(248,248,248,.45) }
+
+.catalog-note{ margin-top:32px; padding:16px; border-radius:16px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:20px; background:rgba(232,224,216,.06); border:1px solid rgba(232,224,216,.12); color:rgba(248,248,248,.65) }
+.catalog-note b{ color:#E8E0D8 }
+
+/* ---------- delivery ---------- */
+.delivery{ padding-bottom:32px }
+.delivery-card{ border-radius:20px; padding:24px; background:#141414; border:1px solid rgba(248,248,248,.07) }
+@media(min-width:640px){ .delivery-card{ padding:32px } }
+.delivery-title{ font-family:'Instrument Serif',serif; font-size:24px; margin-top:8px }
+.delivery-desc{ font-family:'JetBrains Mono',monospace; font-size:11px; line-height:20px; color:rgba(248,248,248,.60); margin-top:8px; max-width:640px }
+.delivery-grid{ display:grid; gap:12px; margin-top:24px; font-family:'JetBrains Mono',monospace; font-size:11px }
+@media(min-width:640px){ .delivery-grid{ grid-template-columns:repeat(3,1fr) } }
+.delivery-item{ border-radius:12px; padding:16px; background:rgba(248,248,248,.05); border:1px solid rgba(248,248,248,.07); transition:transform .3s ease, border-color .3s ease }
+.delivery-item:hover{ transform:translateY(-3px); border-color:rgba(248,248,248,.18) }
+.delivery-item b{ color:#F8F8F8 }
+.delivery-item span{ color:rgba(248,248,248,.5) }
+
+/* ---------- contacts ---------- */
+.contacts{ padding-bottom:48px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:20px; color:rgba(248,248,248,.5) }
+.contacts b{ color:#F8F8F8 }
+.contacts a{ color:#E8E0D8; text-decoration:underline }
+.contacts a:hover{ color:#F8F8F8 }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="splash grain">
+  <div class="splash-bg"></div>
+  <div class="wave breathe" style="width:820px; height:620px; left:-120px; top:-140px; background:radial-gradient(circle at 50% 50%, rgba(196,184,168,0.08) 0%, rgba(196,184,168,0.04) 38%, transparent 72%)"></div>
+  <div class="wave breathe2" style="width:760px; height:760px; right:-160px; top:18%; background:radial-gradient(circle at 50% 50%, rgba(240,237,232,0.05) 0%, rgba(240,237,232,0.025) 42%, transparent 74%)"></div>
+  <div class="splash-vignette"></div>
+
+  <nav class="nav">
+    <div class="nav-left">
+      <div class="nav-logo"><img src="logo-circle.png" onerror="this.style.display='none'"></div>
+      <span class="nav-brand">KICK & FIT</span>
+    </div>
+    <div class="nav-menu">
+      <a href="#catalog" class="nav-link">Каталог</a>
+      <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank" rel="noopener" class="nav-link">Авито</a>
+      <a href="https://t.me/KickFitStore" target="_blank" class="nav-link">Telegram</a>
+      <a href="#delivery" class="nav-link">Доставка и оплата</a>
+      <a href="#contacts" class="nav-link">Контакты</a>
+    </div>
+    <div class="nav-geo">КИТАЙ → МОСКВА → КРЫМ</div>
+  </nav>
+
+  <div class="hero" id="hero">
+    <div class="fade hero-kicker">ДЛЯ ТЕХ, КТО НЕ ПРОПУСКАЕТ</div>
+    <div class="hero-title">
+      <div class="hero-line"><div id="line1" class="hero-line-text"></div></div>
+      <div class="hero-line" style="margin-top:-6px"><div id="line2" class="hero-line-text"></div></div>
+    </div>
+    <p class="fade hero-desc">Собственный крой. Прямые поставки из Гуанчжоу.</p>
+    <div class="fade hero-actions">
+      <a href="https://t.me/KickFitStore" target="_blank" class="btn btn-primary">Смотреть в Telegram</a>
+      <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank" rel="noopener" class="btn btn-ghost">Открыть на Авито</a>
+    </div>
+    <div class="fade hero-hint">Заказать: Авито | Telegram — отвечаю лично</div>
+    <div class="fade hero-meta">
+      <span class="hero-geo">КИТАЙ → МОСКВА → КРЫМ</span>
+      <span class="dot"></span>
+      <span>Прямые поставки. Доставка по всей России и Крыму</span>
+    </div>
+    <div class="hero-side">ЭКИПИРОВКА СПОРТСМЕНА</div>
+  </div>
+
+  <div class="plaque" id="plaque">
+    <a href="https://t.me/KickFitStore" target="_blank" rel="noopener" class="plaque-card">
+      <div class="plaque-qr"><img src="qr.png" alt="QR"></div>
+      <div class="plaque-text">
+        <div class="plaque-line">Каталог и цены — в Telegram</div>
+        <div class="plaque-line">Объявления и отзывы — на Авито</div>
+        <div class="plaque-handle">t.me/KickFitStore →</div>
+        <div class="plaque-link">https://t.me/KickFitStore</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- CATALOG -->
+<section id="catalog" class="container section">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">КАТАЛОГ — ПОДГРУЖЕН С АВИТО</div>
+      <h2 class="section-title">Всё в наличии в Крыму</h2>
+      <p class="section-sub">Товар уже в Крыму и Москве. Цены как на Авито. Безопасная сделка и отзывы там, полный каталог и быстрая связь — в Telegram.</p>
+    </div>
+    <div class="head-actions">
+      <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Смотреть на Авито →</a>
+      <a href="https://t.me/KickFitStore" target="_blank" class="btn btn-ghost btn-sm">Telegram</a>
+    </div>
+  </div>
+
+  <div id="avitoStatus" class="avito-status" style="display:none"></div>
+  <div id="catalogGrid" class="catalog-grid"></div>
+
+  <div class="catalog-note">
+    <b>Авито — JS-витрина:</b> прямые товары с <span style="text-decoration:underline">avito.ru/brands/.../all?sellerId=...</span> грузятся динамически и блокируют парсинг. Этот каталог сейчас — статичная копия с твоими ценами. Хочешь live-синхронизацию — подключим Avito API для бизнеса (нужен токен) или поставим парсер на сервере, который будет обновлять цены раз в час. Пока цены и фото можно править прямо в файле catalogGrid.
+  </div>
+</section>
+
+<!-- DELIVERY -->
+<section id="delivery" class="container delivery">
+  <div class="delivery-card">
+    <div class="eyebrow">ЛОГИСТИКА</div>
+    <h3 class="delivery-title">Китай → Москва → Крым</h3>
+    <p class="delivery-desc">Живу в Крыму. Товар идёт напрямую из Гуанчжоу через Москву. Часть уже на складе в Крыму — отправляю за 1 день. Остальное — 5–9 дней из Москвы. Доставка СДЭК, Почта, Авито Доставкой.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item"><b>В наличии в Крыму</b><br><span>Отправка сегодня • СДЭК/Почта</span></div>
+      <div class="delivery-item"><b>Из Москвы</b><br><span>5–9 дней • Трекинг</span></div>
+      <div class="delivery-item"><b>Оплата</b><br><span>Авито Безопасная сделка • Перевод</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTS -->
+<section id="contacts" class="container contacts">
+  <b>Контакты:</b> Telegram — <a href="https://t.me/KickFitStore" target="_blank">t.me/KickFitStore</a> (отвечаю лично, каталог и цены) • Авито — <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank">бренд Kick & Fit на Авито</a> (отзывы 5.0, безопасная сделка)
+</section>
+
+<script>
+function fog(el, text, base){
+  el.innerHTML="";
+  [...text].forEach(function(ch,i){
+    var s=document.createElement('span');
+    s.className='letter';
+    s.textContent=(ch===" ")?"\u00A0":ch;
+    if(ch==="&"){ s.style.fontStyle="italic"; s.style.fontSize="0.60em"; s.style.verticalAlign="middle"; s.style.margin="0 .10em"; s.style.color="#E8E0D8" }
+    s.style.animationDelay=(base + i*0.09)+'s';
+    el.appendChild(s);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ s.classList.add('in'); }); });
+  });
+}
+fog(document.getElementById('line1'),"KICK",0.45);
+fog(document.getElementById('line2'),"&  FIT",0.78);
+setTimeout(function(){ var p=document.getElementById('plaque'); if(p){ p.classList.add('show'); } },600);
+
+var products=[
+  {title:"Кофта Boss", price:"1 899 ₽", old:"1 999 ₽", disc:"-5%", img:"boss.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Носки SpongeBob", price:"379 ₽", old:"399 ₽", disc:"-5%", img:"spanch.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Кофта david beckham", price:"474 ₽", old:"499 ₽", disc:"-5%", img:"beckham.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Футболка \"Reebok\"", price:"569 ₽", old:"599 ₽", disc:"-5%", img:"reebok.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Кофта adidas", price:"474 ₽", old:"499 ₽", disc:"-5%", img:"adidas.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Кофта fsbn", price:"474 ₽", old:"499 ₽", disc:"-5%", img:"fsbn.jpg", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Кофта", price:"664 ₽", old:"699 ₽", disc:"-5%", img:"tvoi.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Белая кофта \"smog\"", price:"474 ₽", old:"499 ₽", disc:"-5%", img:"smog.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Футболка ballerr", price:"664 ₽", old:"699 ₽", disc:"-5%", img:"ballerr.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Шорты Адидас легит", price:"1 424 ₽", old:"1 499 ₽", disc:"-5%", img:"shorts.webp", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"},
+  {title:"Носки Dunlop", price:"284 ₽", old:"299 ₽", disc:"-5%", img:"dunlop.jpg", sub:"1 шт. в наличии • Авито Доставка • 2 способа • Евпатория"}
+];
+var grid=document.getElementById('catalogGrid');
+function render(list){
+  grid.innerHTML="";
+  list.forEach(function(p){
+    var parts=p.sub.split('•');
+    var html='<div class="card">'
+      +'<div class="card-img"><img src="'+p.img+'" alt="'+p.title+'"></div>'
+      +'<div class="card-body">'
+      +'<div class="card-title">'+p.title+'</div>'
+      +'<div class="card-price">'+p.price+' <span class="old">'+p.old+'</span> <span class="disc">'+p.disc+'</span></div>'
+      +'<div class="card-line">'+parts[0].trim()+'</div>'
+      +'<div class="card-line mute">⛟ '+parts[1].trim()+' • '+parts[2].trim()+'</div>'
+      +'<div class="card-line faint">'+parts[3].trim()+'</div>'
+      +'</div></div>';
+    grid.innerHTML+=html;
+  });
+}
+render(products);
+</script>
+</body>
+</html>
