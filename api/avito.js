@@ -1,7 +1,8 @@
 // Serverless Function для Vercel: безопасный прокси к API Авито.
 // Секреты читаются ТОЛЬКО из переменных окружения (Vercel -> Settings -> Environment Variables).
+// Возвращает ТОЛЬКО активные объявления — снятые/проданные автоматически не попадают в список.
+
 export default async function handler(req, res) {
-  // Разрешаем только GET (с фронта будем вызывать именно GET /api/avito)
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -15,6 +16,10 @@ export default async function handler(req, res) {
       error: "AVITO_CLIENT_ID / AVITO_CLIENT_SECRET не заданы в Environment Variables",
     });
   }
+
+  // CORS для фронта (при желании замени "*" на свой домен)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET");
 
   try {
     // 1) Получаем access token по client_credentials
@@ -38,18 +43,17 @@ export default async function handler(req, res) {
 
     const accessToken = tokenData.access_token;
 
-    // 2) Разрешаем CORS только с нашего домена (Vercel доверие)
-    res.setHeader("Access-Control-Allow-Origin", "*"); // при желании замени на свой домен
-    res.setHeader("Access-Control-Allow-Methods", "GET");
-
-    // 3) Запрашиваем мои товары
-    const itemsRes = await fetch("https://api.avito.ru/core/v1/items", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + accessToken,
-        "Content-Type": "application/json",
-      },
-    });
+    // 2) Запрашиваем объявления. per_page/page обязательны для core/v1/items.
+    const itemsRes = await fetch(
+      "https://api.avito.ru/core/v1/items?per_page=50&page=1",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const itemsData = await itemsRes.json();
 
@@ -60,10 +64,36 @@ export default async function handler(req, res) {
       });
     }
 
-    // Нормализуем ответ: отдаём список карточек с нужными полями
+    const rawItems = itemsData.items || [];
+
+    // 3) Оставляем ТОЛЬКО активные объявления.
+    //    Статус "active" — объявление в продаже. Всё остальное (снято/продано/удалено)
+    //    не попадает в выдачу и исчезает с сайта автоматически.
+    const activeItems = rawItems.filter(function (it) {
+      const st = it.status;
+      // Если статус есть — берём только активные.
+      // Если статуса нет в ответе — считаем товар доступным (лучше показать, чем скрыть),
+      // но это редкий случай; обычно core/v1/items всегда отдаёт status.
+      if (st === undefined || st === null) return true;
+      return String(st).toLowerCase() === "active";
+    });
+
+    // Нормализуем: отдаём только нужные поля каждой карточки.
+    const items = activeItems.map(function (it) {
+      return {
+        id: it.id,
+        title: it.title || "",
+        status: it.status || "active",
+        price: it.price && it.price.value,
+        description: it.description || "",
+        images: (it.images || []).slice(0, 3).map(function (img) { return img.url || null; }),
+        url: "https://www.avito.ru/" + it.id,
+      };
+    });
+
     res.status(200).json({
-      count: itemsData.items ? itemsData.items.length : 0,
-      items: itemsData.items || [],
+      count: items.length,
+      items: items,
     });
   } catch (err) {
     res.status(500).json({ error: "Внутренняя ошибка сервера", detail: String(err && err.message || err) });
