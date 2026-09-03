@@ -77,12 +77,12 @@ a, button{ transition:all .3s ease }
 .hero-side{ display:none; position:absolute; left:32px; top:50%; transform:translateY(-50%); writing-mode:vertical-rl; flex-direction:column; align-items:center; gap:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.28em; color:rgba(232,224,216,.20) }
 @media(min-width:1280px){ .hero-side{ display:flex } }
 
-/* ---------- QR / Telegram plaque (bottom-right) ---------- */
+/* ---------- QR / Telegram plaque (bottom-right, на мобильном — внизу по центру) ---------- */
 .plaque{ position:absolute; bottom:32px; right:32px; z-index:20; transform:translateY(100px); opacity:0; transition:transform 3.0s cubic-bezier(.16,1,.3,1), opacity 2.0s ease }
 .plaque.show{ transform:translateY(0); opacity:1 }
 .plaque-card{ display:flex; align-items:center; gap:16px; padding:20px 24px; border-radius:24px; background:rgba(248,248,248,.07); border:1px solid rgba(248,248,248,.12); backdrop-filter:blur(16px) }
 .plaque-qr{ width:132px; height:132px; border-radius:10px; background:#fff; padding:6px; flex-shrink:0 }
-.plaque-qr img{ width:100%; height:100%; display:block; border-radius:6px }
+.plaque-qr img{ width:100%; height:100%; display:block; border-radius:6px; object-fit:contain }
 .plaque-text{ text-align:left }
 .plaque-line{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; color:rgba(248,248,248,.60) }
 .plaque-handle{ font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:#F8F8F8; margin-top:4px; transition:color .3s ease }
@@ -119,7 +119,7 @@ a, button{ transition:all .3s ease }
 .card-line.mute{ color:rgba(248,248,248,.50) }
 .card-line.faint{ color:rgba(248,248,248,.45) }
 
-/* ---------- блок «Каталог временно недоступен» ---------- */
+/* ---------- блок «Каталог временно недоступен» (показывается, только если и API, и статика пусты) ---------- */
 .unavail{ margin-top:32px; padding:40px 24px; border-radius:20px; background:#141414; border:1px solid rgba(248,248,248,.10); text-align:center }
 .unavail-title{ font-family:'Instrument Serif',serif; font-size:28px; line-height:1.1 }
 @media(min-width:640px){ .unavail-title{ font-size:34px } }
@@ -148,6 +148,40 @@ a, button{ transition:all .3s ease }
 .contacts b{ color:#F8F8F8 }
 .contacts a{ color:#E8E0D8; text-decoration:underline }
 .contacts a:hover{ color:#F8F8F8 }
+
+/* ================= МОБИЛЬНАЯ ВЕРСИЯ ================= */
+@media (max-width: 768px){
+  .nav{ height:48px; padding:0 16px }
+  .nav-logo{ width:34px; height:34px }
+  .nav-brand{ font-size:9px }
+  .hero{ padding:28px 16px }
+  .hero-line-text{ font-size:clamp(44px, 16vw, 90px) }
+  .hero-kicker{ font-size:9px }
+  .hero-desc{ font-size:11px; max-width:100% }
+  .hero-meta{ flex-direction:column; gap:8px }
+  .hero-side{ display:none }
+  .hero-title{ max-width:100% }
+
+  /* QR-блок: внизу по центру, НЕ перекрывает текст */
+  .plaque{ position:relative; bottom:auto; right:auto; left:0; width:100%; display:flex; justify-content:center; padding:16px 16px 28px }
+  .plaque-card{ flex-direction:column; text-align:center; width:100%; max-width:360px }
+  .plaque-text{ text-align:center }
+  .plaque-qr{ width:120px; height:120px }
+
+  /* Каталог: одна колонка, по центру */
+  .catalog-grid{ grid-template-columns:1fr }
+  .card{ flex-direction:column; align-items:center; text-align:center }
+  .card-img{ width:100%; height:auto; max-width:240px }
+  .card-body{ text-align:center }
+  .section-head{ flex-direction:column; align-items:center; text-align:center }
+  .section-sub{ margin-left:auto; margin-right:auto }
+  .head-actions{ flex-direction:column; align-items:center }
+
+  .delivery-grid{ grid-template-columns:1fr }
+  .delivery-card{ text-align:center }
+  .delivery-desc{ margin-left:auto; margin-right:auto }
+  .btn{ width:100%; max-width:340px }
+}
 </style>
 </head>
 <body>
@@ -161,7 +195,7 @@ a, button{ transition:all .3s ease }
 
   <nav class="nav">
     <div class="nav-left">
-      <div class="nav-logo"><img src="logo-circle.png" alt="KICK & FIT" onerror="this.src='logo-badge.png'; this.onerror=null;"></div>
+      <div class="nav-logo"><img src="kick.jpg" alt="KICK & FIT" onerror="this.src='logo-badge.png'; this.onerror=null;"></div>
       <span class="nav-brand">KICK & FIT</span>
     </div>
     <div class="nav-menu">
@@ -233,7 +267,7 @@ a, button{ transition:all .3s ease }
   </div>
 
   <div class="catalog-note">
-    <b>Live-каталог:</b> товары подгружаются с сервера через <span style="text-decoration:underline">/api/avito</span> (безопасно, ключи не видны клиенту). Только то, что реально в продаже на Авито: если объявление снято или удалено — оно сразу исчезает с сайта.
+    <b>Live-каталог:</b> товары подгружаются с сервера через <span style="text-decoration:underline">/api/avito</span>; если API недоступен — показывается статичный каталог из файла. Это фолбэк, чтобы сайт никогда не был пустым.
   </div>
 </section>
 
@@ -273,9 +307,30 @@ fog(document.getElementById('line1'),"KICK",0.45);
 fog(document.getElementById('line2'),"&  FIT",0.78);
 setTimeout(function(){ var p=document.getElementById('plaque'); if(p){ p.classList.add('show'); } },600);
 
-/* ---------- каталог: только live из Авито (статичного fallback нет) ---------- */
+/* ---------- каталог: live из Авито + статичный fallback ---------- */
 var grid=document.getElementById('catalogGrid');
 var unavailEl=document.getElementById('unavail');
+var gridInitialized=false;
+
+/* Статичный каталог-фолбэк из 11 товаров */
+var products=[
+  {id:"8164907665", title:"Кофта Boss", price:1899, oldPrice:1999, image:"boss.webp"},
+  {id:"8165878101", title:"Носки SpongeBob", price:379, oldPrice:399, image:"spanch.webp"},
+  {id:"8197130253", title:"Кофта david beckham", price:474, oldPrice:499, image:"beckham.webp"},
+  {id:"8229504258", title:"Носки Dunlop", price:284, oldPrice:299, image:"dunlop.jpg"},
+  {id:"8197604678", title:"Футболка \"Reebok\"", price:569, oldPrice:599, image:"reebok.webp"},
+  {id:"", title:"Кофта adidas", price:474, oldPrice:499, image:"adidas.webp"},
+  {id:"", title:"Кофта fsbn", price:474, oldPrice:499, image:"fsbn.jpg"},
+  {id:"", title:"Кофта", price:664, oldPrice:699, image:"tvoi.webp"},
+  {id:"", title:"Белая кофта \"smog\"", price:474, oldPrice:499, image:"smog.webp"},
+  {id:"", title:"Футболка ballerr", price:664, oldPrice:699, image:"ballerr.webp"},
+  {id:"", title:"Шорты Адидас легит", price:1424, oldPrice:1499, image:"shorts.webp"}
+];
+
+function fmtPrice(n){
+  if(n===undefined || n===null) return "";
+  return Number(n).toLocaleString("ru-RU")+" ₽";
+}
 
 function itemUrl(p){
   var id=p.id || p.itemId;
@@ -283,22 +338,32 @@ function itemUrl(p){
   return p.url || "#";
 }
 
-function fmtPrice(n){
-  if(n===undefined || n===null) return "";
-  return Number(n).toLocaleString("ru-RU")+" ₽";
+/* Нормализуем любой товар (из статики или из API) к единому виду */
+function normalize(p){
+  if(p.image || p.oldPrice){ return p; } /* статичный товар */
+  return {
+    id: p.id,
+    title: p.title || "Без названия",
+    price: p.price ? Number(p.price) : null,
+    oldPrice: null,
+    image: null,
+    url: p.url
+  };
 }
 
 function renderCard(p){
   var href=itemUrl(p);
-  var img=p.images && p.images[0];
+  var img=p.image || (p.images && p.images[0]);
   var price=fmtPrice(p.price);
-  var line=(p.status ? "Наличие: "+p.status : "Актуально на Авито");
+  var old=p.oldPrice? '<span class="old">'+fmtPrice(p.oldPrice)+'</span>':'';
+  var disc=(p.oldPrice && p.price)? ' <span class="disc">'+(Math.round((1-p.price/p.oldPrice)*100))+'%</span>':'';
+  var line=(p.status ? "Наличие: "+p.status : "1 шт. в наличии • Авито Доставка • Евпатория");
   var html='<a href="'+href+'" target="_blank" rel="noopener noreferrer" style="display:block; text-decoration:none; color:inherit;">'
     +'<div class="card">'
     +'<div class="card-img">'+(img?'<img src="'+img+'" alt="'+p.title+'" loading="lazy">':'<div class="mono" style="color:rgba(248,248,248,.3);font-size:10px;padding:8px">нет фото</div>')+'</div>'
     +'<div class="card-body">'
     +'<div class="card-title">'+p.title+'</div>'
-    +'<div class="card-price">'+price+'</div>'
+    +'<div class="card-price">'+price+' '+old+disc+'</div>'
     +'<div class="card-line mute">'+line+'</div>'
     +'</div></div>'
     +'</a>';
@@ -307,29 +372,31 @@ function renderCard(p){
 
 function renderCards(list){
   grid.innerHTML="";
-  if(!list || !list.length){ showUnavailable(); return; }
-  list.forEach(function(p){ grid.innerHTML+=renderCard(p); });
+  unavailEl.style.display="none";
+  if(!list || !list.length){ return; }
+  list.forEach(function(p){ grid.innerHTML+=renderCard(normalize(p)); });
+  gridInitialized=true;
 }
 
 function showUnavailable(){
   grid.innerHTML="";
-  if(unavailEl){ unavailEl.style.display="block"; }
+  unavailEl.style.display="block";
 }
 
-/* Единственный источник каталога — Авито */
+/* Сначала пробуем live с Авито; при ошибке/пустоте — статический каталог */
 function loadAvito(){
   fetch("/api/avito", { method:"GET" })
     .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
     .then(function(res){
       var j=res.j;
-      if(res.ok && j && Array.isArray(j.items)){
+      if(res.ok && j && Array.isArray(j.items) && j.items.length){
         renderCards(j.items);
       } else {
-        showUnavailable();
+        renderCards(products); /* fallback */
       }
     })
     .catch(function(){
-      showUnavailable();
+      renderCards(products); /* fallback */
     });
 }
 
