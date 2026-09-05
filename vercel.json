@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "api/avito.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/avito", "dest": "/api/avito.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
