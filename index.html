@@ -245,7 +245,7 @@ a, button{ transition:all .3s ease }
 <section id="catalog" class="container section">
   <div class="section-head">
     <div>
-      <div class="eyebrow">КАТАЛОГ — ПОДГРУЖЕН С АВИТО</div>
+      <div class="eyebrow">КАТАЛОГ</div>
       <h2 class="section-title">Всё в наличии в Крыму</h2>
       <p class="section-sub">Товар уже в Крыму и Москве. Цены как на Авито. Безопасная сделка и отзывы там, полный каталог и быстрая связь — в Telegram.</p>
     </div>
@@ -258,8 +258,8 @@ a, button{ transition:all .3s ease }
   <div id="catalogGrid" class="catalog-grid"></div>
 
   <div id="unavail" class="unavail" style="display:none">
-    <div class="unavail-title">Каталог временно недоступен.</div>
-    <div class="unavail-text">Загляните в наш Telegram или на Авито — там всегда актуальный список.</div>
+    <div class="unavail-title">Каталог пуст.</div>
+    <div class="unavail-text">Скоро здесь появятся товары. Пока — каталог и цены в Telegram, объявления и отзывы на Авито.</div>
     <div class="unavail-actions">
       <a href="https://t.me/KickFitStore" target="_blank" class="btn btn-primary">Смотреть в Telegram</a>
       <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank" rel="noopener" class="btn btn-ghost">Открыть на Авито</a>
@@ -267,7 +267,7 @@ a, button{ transition:all .3s ease }
   </div>
 
   <div class="catalog-note">
-    <b>Live-каталог:</b> товары подгружаются с сервера через <span style="text-decoration:underline">/api/avito</span>; если API недоступен — показывается статичный каталог из файла. Это фолбэк, чтобы сайт никогда не был пустым.
+    Каталог наполняется. Все вопросы, наличие и цены — в Telegram.
   </div>
 </section>
 
@@ -307,27 +307,10 @@ fog(document.getElementById('line1'),"KICK",0.45);
 fog(document.getElementById('line2'),"&  FIT",0.78);
 setTimeout(function(){ var p=document.getElementById('plaque'); if(p){ p.classList.add('show'); } },600);
 
-/* ---------- каталог: live из Авито + статичный fallback ---------- */
+/* ---------- каталог ---------- */
 var grid=document.getElementById('catalogGrid');
 var unavailEl=document.getElementById('unavail');
 var gridInitialized=false;
-
-/* Статичный каталог-фолбэк */
-var products=[
-  {id:"8164907665", title:"Кофта Boss", price:1899, oldPrice:1999, image:"./boss.webp"},
-  {id:"8165878101", title:"Носки SpongeBob", price:379, oldPrice:399, image:"./spanch.webp"},
-  {id:"8197130253", title:"Кофта david beckham", price:474, oldPrice:499, image:"./beckham.webp"},
-  {id:"8229504258", title:"Носки Dunlop", price:284, oldPrice:299, image:"./dunlop.jpg"},
-  {id:"8197604678", title:"Футболка \"Reebok\"", price:569, oldPrice:599, image:"./reebok.webp"},
-  {id:"", title:"Кофта adidas", price:474, oldPrice:499, image:"./adidas.webp"},
-  {id:"", title:"Кофта fsbn", price:474, oldPrice:499, image:"./fsbn.jpg"},
-  {id:"", title:"Кофта", price:664, oldPrice:699, image:"./tvoi.webp"},
-  {id:"", title:"Белая кофта \"smog\"", price:474, oldPrice:499, image:"./smog.webp"},
-  {id:"", title:"Футболка ballerr", price:664, oldPrice:699, image:"./ballerr.webp"},
-  {id:"", title:"Шорты Адидас легит", price:1424, oldPrice:1499, image:"./shorts.webp"},
-  {id:"", title:"Товар 12", price:0, oldPrice:0, image:"./product12.webp"},
-  {id:"", title:"Товар 13", price:0, oldPrice:0, image:"./product13.webp"}
-];
 
 function fmtPrice(n){
   if(n===undefined || n===null || n===0) return "Цена по запросу";
@@ -389,21 +372,9 @@ function showUnavailable(){
   unavailEl.style.display="block";
 }
 
-/* Сначала пробуем live с Авито; при ошибке/пустоте — статический каталог */
+/* Каталог сейчас пуст — выводим заглушку вместо карточек */
 function loadAvito(){
-  fetch("/api/avito", { method:"GET" })
-    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
-    .then(function(res){
-      var j=res.j;
-      if(res.ok && j && Array.isArray(j.items) && j.items.length){
-        renderCards(j.items);
-      } else {
-        renderCards(products); /* fallback */
-      }
-    })
-    .catch(function(){
-      renderCards(products); /* fallback */
-    });
+  showUnavailable();
 }
 
 loadAvito();
