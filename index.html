@@ -225,7 +225,7 @@ function smoothScrollTo(targetY, duration){
   var diff = targetY - startY;
   if(Math.abs(diff) < 2) return;
   var startTime = null;
-  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  function ease(t){ return 1 - Math.pow(1 - t, 4); }
   function step(ts){
     if(startTime === null) startTime = ts;
     var p = Math.min((ts - startTime) / duration, 1);
@@ -242,7 +242,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     if(target){
       e.preventDefault();
       var top = target.getBoundingClientRect().top + window.pageYOffset;
-      smoothScrollTo(top, 700);
+      smoothScrollTo(top, 1100);
       history.replaceState(null, "", id);
     }
   });
