@@ -93,12 +93,18 @@
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
-    transition: background .2s, color .2s, border-color .2s;
     background: rgba(248,248,248,.08);
     color: rgba(248,248,248,.55);
+    transition: background .4s ease, color .4s ease, border-color .4s ease, box-shadow .4s ease, transform .4s ease;
   }
   .tab:hover { background: rgba(248,248,248,.14); color: #F8F8F8; }
-  .tab.active { background: #F8F8F8; color: #0A0A0A; border-color: #F8F8F8; }
+  .tab.active {
+    background: #F8F8F8;
+    color: #0A0A0A;
+    border-color: #F8F8F8;
+    box-shadow: 0 0 18px rgba(248,248,248,.22);
+    transform: scale(1.06);
+  }
   .drop {
     border: 1.5px dashed rgba(248,248,248,.22);
     border-radius: 16px;
@@ -329,26 +335,35 @@
   var keyOf = function (r) { return r.marketplace + ":" + r.productId; };
 
   /* ---- tabs ---- */
-  function renderTabs() {
+  var tabBtns = {};
+  function syncTabs() {
+    MARKETPLACES.forEach(function (m) {
+      tabBtns[m].className = "tab" + (state.marketplaces.indexOf(m) !== -1 ? " active" : "");
+    });
+  }
+  function toggleTab(m) {
+    var idx = state.marketplaces.indexOf(m);
+    if (idx !== -1) {
+      if (state.marketplaces.length === 1) return;
+      state.marketplaces.splice(idx, 1);
+    } else {
+      state.marketplaces.push(m);
+    }
+    syncTabs();
+  }
+  function buildTabs() {
     var el = $("tabs");
     el.innerHTML = "";
     MARKETPLACES.forEach(function (m) {
       var b = document.createElement("button");
       b.type = "button";
-      b.className = "tab" + (state.marketplaces.indexOf(m) !== -1 ? " active" : "");
+      b.className = "tab";
       b.textContent = MARKETPLACE_LABEL[m];
-      b.onclick = function () {
-        var idx = state.marketplaces.indexOf(m);
-        if (idx !== -1) {
-          if (state.marketplaces.length === 1) return;
-          state.marketplaces.splice(idx, 1);
-        } else {
-          state.marketplaces.push(m);
-        }
-        renderTabs();
-      };
+      b.onclick = function () { toggleTab(m); };
       el.appendChild(b);
+      tabBtns[m] = b;
     });
+    syncTabs();
   }
 
   /* ---- results list ---- */
@@ -572,7 +587,7 @@
     fi.value = "";
   };
 
-  renderTabs();
+  buildTabs();
   render();
 })();
 </script>
