@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kik FIT — Поиск товара с Китая</title>
+<meta name="description" content="Поиск товаров на 1688 и Taobao по фото или названию, расчёт цены с доставкой.">
+<style>
+  :root {
+    --bg: #F5F5F4;
+    --fg: #1C1917;
+    --muted: #78716C;
+    --border: #E7E5E4;
+    --accent: #E8622A;
+    --accent-dark: #D4561D;
+    --card: #FFFFFF;
+    --taobao: #FF5000;
+    --chip-bg: #F5F5F4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .topbar {
+    background: #1C1917;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .topbar .brand { font-weight: 800; letter-spacing: 0.02em; font-size: 1.05rem; }
+  .topbar .brand span { color: #E8622A; }
+  .topbar a.back {
+    color: #E7E5E4;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid #44403C;
+    border-radius: 9999px;
+    transition: background 0.15s;
+  }
+  .topbar a.back:hover { background: #292524; color: #fff; }
+  .wrap { max-width: 64rem; margin: 0 auto; padding: 3rem 1rem; }
+  .title h1 { font-size: 2.25rem; font-weight: 800; color: #1C1917; margin-bottom: 0.5rem; }
+  .title p { font-size: 1.125rem; color: #78716C; margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 1024px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    border: 1px solid #E7E5E4;
+    padding: 1.5rem;
+  }
+  .card h2 { font-size: 1.25rem; font-weight: 600; color: #1C1917; margin-bottom: 1rem; }
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab {
+    padding: 0.375rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    background: #F5F5F4;
+    color: #78716C;
+  }
+  .tab:hover { background: #E7E5E4; }
+  .tab.active { background: #1C1917; color: #fff; }
+  .drop {
+    border: 2px dashed #E7E5E4;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .drop:hover, .drop.over { border-color: #E8622A; background: #FFF7ED; }
+  .drop .icon { font-size: 2.25rem; margin-bottom: 0.75rem; }
+  .drop .main { color: #1C1917; font-weight: 500; margin-bottom: 0.25rem; }
+  .drop .sub { font-size: 0.875rem; color: #78716C; }
+  .drop img.preview { max-height: 16rem; max-width: 100%; border-radius: 0.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: block; margin: 0 auto; }
+  .drop .tip { font-size: 0.875rem; color: #78716C; margin-top: 0.75rem; }
+  .kw-label { display: block; font-size: 0.875rem; font-weight: 500; color: #1C1917; margin: 1rem 0 0.5rem; }
+  .kw-form { display: flex; gap: 0.5rem; }
+  .kw-form input {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border: 1px solid #E7E5E4;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #1C1917;
+    font-size: 0.875rem;
+    font-family: inherit;
+    outline: none;
+    min-width: 0;
+  }
+  .kw-form input::placeholder { color: #A8A29E; }
+  .kw-form input:focus { border-color: transparent; box-shadow: 0 0 0 2px #E8622A; }
+  .btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: #E8622A;
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.875rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #D4561D; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .err {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 0.5rem;
+    color: #B91C1C;
+    font-size: 0.875rem;
+  }
+  .api-err {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 0.5rem;
+    color: #92400E;
+    font-size: 0.75rem;
+  }
+  .state { padding: 3rem 0; text-align: center; color: #78716C; }
+  .spinner {
+    width: 2rem; height: 2rem; border-radius: 9999px;
+    border: 2px solid transparent; border-bottom-color: #E8622A;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .result {
+    display: flex; gap: 1rem; padding: 0.75rem;
+    border: 1px solid #E7E5E4; border-radius: 0.75rem;
+    background: #fff; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-bottom: 0.75rem;
+  }
+  .result:hover { border-color: #E8622A; }
+  .result.selected { border-color: #E8622A; background: #FFF7ED; }
+  .result img { width: 5rem; height: 5rem; object-fit: cover; border-radius: 0.5rem; flex: none; }
+  .result .body { flex: 1; min-width: 0; }
+  .result .head { display: flex; align-items: center; gap: 0.5rem; }
+  .badge {
+    font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.125rem 0.375rem; border-radius: 0.25rem; flex: none;
+  }
+  .badge.t1688 { background: rgba(232,98,42,0.11); color: #E8622A; }
+  .badge.taobao { background: rgba(255,80,0,0.11); color: #FF5000; }
+  .result .ttl { font-size: 0.875rem; font-weight: 500; color: #1C1917; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .result .seller { font-size: 0.75rem; color: #78716C; margin-top: 0.125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .result .meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; }
+  .result .price { font-size: 1.125rem; font-weight: 700; color: #E8622A; }
+  .result .moq { font-size: 0.75rem; color: #78716C; }
+  .calc { margin-top: 1rem; padding: 1rem; background: #F5F5F4; border: 1px solid #E7E5E4; border-radius: 0.75rem; }
+  .calc h4 { font-weight: 600; color: #1C1917; margin-bottom: 0.75rem; }
+  .calc .row { display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.75rem; }
+  .calc .row .k { color: #78716C; }
+  .calc .row .v { font-weight: 500; color: #1C1917; }
+  .calc .row input {
+    width: 3.5rem; padding: 0.25rem 0.5rem;
+    border: 1px solid #E7E5E4; border-radius: 0.375rem;
+    text-align: center; color: #1C1917; font-size: 0.875rem; font-family: inherit;
+  }
+  .calc .total { border-top: 1px solid #E7E5E4; padding-top: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
+  .calc .total .lbl { font-weight: 600; color: #1C1917; }
+  .calc .total .val { font-size: 1.25rem; font-weight: 700; color: #E8622A; }
+  .btn-dark {
+    display: block; width: 100%; text-align: center;
+    padding: 0.5rem 1rem; margin-top: 0.75rem;
+    background: #1C1917; color: #fff; border: none; border-radius: 0.5rem;
+    font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.15s; font-family: inherit;
+  }
+  .btn-dark:hover { background: #000; }
+  .btn-accent {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 0.5rem 1rem; margin-top: 0.5rem;
+    background: #E8622A; color: #fff; border: none; border-radius: 0.5rem;
+    font-size: 0.875rem; font-weight: 500; transition: background 0.15s;
+  }
+  .btn-accent:hover { background: #D4561D; }
+  .pdd {
+    display: block; text-align: center; margin-top: 1rem;
+    padding: 0.625rem 1rem; border-radius: 0.5rem;
+    border: 1px solid #E8622A; color: #E8622A;
+    font-size: 0.875rem; font-weight: 500; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .pdd:hover { background: #FFF7ED; }
+  footer { text-align: center; padding: 2rem 1rem 3rem; color: #A8A29E; font-size: 0.8rem; }
+  footer a { color: #E8622A; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">kik FIT <span>·</span> поиск с Китая</div>
+  <a class="back" href="/">← На главную</a>
+</div>
+
+<main class="wrap">
+  <div class="title">
+    <h1>kik FIT</h1>
+    <p>Найди свой стиль с китайских маркетплейсов</p>
+  </div>
+
+  <div class="grid">
+    <!-- left: upload + keyword -->
+    <div class="card">
+      <h2>📷 Загрузи фото одежды</h2>
+
+      <div class="tabs" id="tabs"></div>
+
+      <div class="drop" id="drop">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+        <div id="dropEmpty">
+          <div class="icon">📷</div>
+          <div class="main">Перетащи фото одежды сюда или нажми для выбора</div>
+          <div class="sub">PNG, JPG до 4MB</div>
+        </div>
+        <div id="dropPreview" style="display:none">
+          <img id="previewImg" class="preview" alt="Preview">
+          <p class="tip" id="previewTip">Нажми или перетащи другое фото</p>
+        </div>
+      </div>
+
+      <label class="kw-label" for="kwInput">Или введи название</label>
+      <form class="kw-form" id="kwForm">
+        <input id="kwInput" type="text" placeholder="Например: белые кроссовки" autocomplete="off">
+        <button class="btn" type="submit" id="kwBtn">Искать</button>
+      </form>
+
+      <div class="err" id="errorBox" style="display:none"></div>
+    </div>
+
+    <!-- right: results -->
+    <div class="card">
+      <h2>🛍️ Результаты</h2>
+      <div id="apiErrors"></div>
+      <div id="loadingState" class="state" style="display:none">
+        <div class="spinner"></div>
+        Ищем...
+      </div>
+      <div id="emptyState" class="state">Загрузи фото, чтобы увидеть результаты</div>
+      <div id="results"></div>
+      <a class="pdd" id="pddLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none">
+        🔍 Этот же запрос на Pinduoduo →
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <a href="/">kik.fitness</a> · поиск и доставка товаров с 1688, Taobao и Pinduoduo
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var MARKETPLACES = ["1688", "taobao"];
+  var MARKETPLACE_LABEL = { "1688": "1688", taobao: "Taobao" };
+  var SHIPPING_RMB = 50;
+  var MARKUP_PERCENT = 15;
+  var RATE_RMB = 11.5;
+
+  var state = {
+    marketplaces: ["1688", "taobao"],
+    results: [],
+    loading: false,
+    error: null,
+    translatedKeyword: null,
+    apiErrors: [],
+    selected: null,
+    preview: null,
+    qty: 1,
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  };
+  var keyOf = function (r) { return r.marketplace + ":" + r.productId; };
+
+  /* ---- tabs ---- */
+  function renderTabs() {
+    var el = $("tabs");
+    el.innerHTML = "";
+    MARKETPLACES.forEach(function (m) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab" + (state.marketplaces.indexOf(m) !== -1 ? " active" : "");
+      b.textContent = MARKETPLACE_LABEL[m];
+      b.onclick = function () {
+        var idx = state.marketplaces.indexOf(m);
+        if (idx !== -1) {
+          if (state.marketplaces.length === 1) return;
+          state.marketplaces.splice(idx, 1);
+        } else {
+          state.marketplaces.push(m);
+        }
+        renderTabs();
+      };
+      el.appendChild(b);
+    });
+  }
+
+  /* ---- results list ---- */
+  function startCalc(r) { state.qty = parseInt(r.minOrderCount || 1, 10) || 1; return r; }
+  function calcValues(r) {
+    var unit = parseFloat(r.consignPrice || r.price) || 0;
+    var minOrder = parseInt(r.minOrderCount || 1, 10) || 1;
+    var qty = Math.max(state.qty, minOrder);
+    var subtotal = unit * qty;
+    var markup = subtotal * (MARKUP_PERCENT / 100);
+    var totalCny = subtotal + markup + SHIPPING_RMB;
+    var totalRmb = Math.round(totalCny * RATE_RMB);
+    return { unit: unit, minOrder: minOrder, qty: qty, markup: markup, totalCny: totalCny, totalRmb: totalRmb };
+  }
+
+  function detailUrl(r) {
+    if (r.detailUrl) return r.detailUrl;
+    return r.marketplace === "taobao"
+      ? "https://item.taobao.com/item.htm?id=" + r.productId
+      : "https://detail.1688.com/offer/" + r.productId + ".html";
+  }
+
+  function renderResults() {
+    var box = $("results");
+    box.innerHTML = "";
+    state.results.forEach(function (r) {
+      var div = document.createElement("div");
+      div.className = "result" + (state.selected === keyOf(r) ? " selected" : "");
+      var badge = r.marketplace === "taobao" ? "taobao" : "t1688";
+      div.innerHTML =
+        (r.imageUrl ? '<img src="' + esc(r.imageUrl) + '" alt="" loading="lazy">' : "") +
+        '<div class="body">' +
+          '<div class="head"><span class="badge ' + badge + '">' + esc(MARKETPLACE_LABEL[r.marketplace]) + "</span>" +
+          '<div class="ttl" title="' + esc(r.title) + '">' + esc(r.title) + "</div></div>" +
+          (r.sellerName ? '<div class="seller">' + esc(r.sellerName) + "</div>" : "") +
+          '<div class="meta"><span class="price">' + esc(r.price) + " ₽</span>" +
+          (r.minOrderCount && r.minOrderCount > 1 ? '<span class="moq">от ' + esc(r.minOrderCount) + " шт.</span>" : "") +
+          "</div></div>";
+      div.onclick = function () {
+        state.selected = state.selected === keyOf(r) ? null : keyOf(r);
+        if (state.selected) startCalc(r);
+        renderResults();
+      };
+      box.appendChild(div);
+    });
+
+    var sel = null;
+    state.results.forEach(function (r) { if (keyOf(r) === state.selected) sel = r; });
+    if (sel) {
+      var c = document.createElement("div");
+      c.className = "calc";
+      var v = calcValues(sel);
+      c.innerHTML =
+        "<h4>Расчёт цены</h4>" +
+        '<div class="row"><span class="k">Цена за 1 шт.</span><span class="v">' + esc(sel.price) + " ₽</span></div>" +
+        '<div class="row"><span class="k">Кол-во (мин. ' + v.minOrder + ')</span>' +
+        '<input type="number" min="' + v.minOrder + '" value="' + state.qty + '" id="qtyInput"></div>' +
+        '<div class="row"><span class="k">Доставка</span><span class="v">' + SHIPPING_RMB + " ₽</span></div>" +
+        '<div class="row"><span class="k">Наценка (' + MARKUP_PERCENT + "%)</span><span class=\"v\">" + v.markup.toFixed(2) + " ₽</span></div>" +
+        '<div class="total"><span class="lbl">Итого</span><span class="val">' + v.totalRmb + " ₽</span></div>" +
+        '<button type="button" class="btn-dark" id="calcBtn">💰 Точная цена с доставкой</button>' +
+        '<a class="btn-accent" target="_blank" rel="noopener noreferrer" href="' + esc(detailUrl(sel)) + '">Посмотреть на ' +
+        esc(MARKETPLACE_LABEL[sel.marketplace]) + " →</a>";
+      box.appendChild(c);
+
+      var qi = c.querySelector("#qtyInput");
+      qi.oninput = function () {
+        var n = parseInt(qi.value, 10);
+        state.qty = isNaN(n) || n < 1 ? 1 : n;
+        renderResults();
+      };
+      c.querySelector("#calcBtn").onclick = function () {
+        fetch("/api/price", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: sel.productId, marketplace: sel.marketplace, quantity: 1 }),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            if (j.error) alert(j.error);
+            else
+              alert(
+                "Итого: " + j.pricing.totalRmb + " ₽ (товар " + j.pricing.marketplacePriceCny +
+                "¥ + доставка " + j.pricing.shippingRmb + " + наценка " + j.pricing.markupRmb + ")"
+              );
+          })
+          .catch(function (e) { alert(e.message); });
+      };
+    }
+  }
+
+  function render() {
+    $("errorBox").style.display = state.error ? "block" : "none";
+    $("errorBox").textContent = state.error || "";
+
+    var ae = $("apiErrors");
+    ae.innerHTML = "";
+    state.apiErrors.forEach(function (m) {
+      var d = document.createElement("div");
+      d.textContent = m;
+      ae.appendChild(d);
+    });
+    ae.style.display = state.apiErrors.length ? "block" : "none";
+
+    $("loadingState").style.display = state.loading ? "block" : "none";
+    var busy = state.loading;
+
+    if (busy) {
+      $("emptyState").style.display = "none";
+      $("results").style.display = "none";
+      $("pddLink").style.display = "none";
+      return;
+    }
+
+    $("results").style.display = "";
+    renderResults();
+
+    if (state.results.length === 0) {
+      $("emptyState").style.display = "block";
+    } else {
+      $("emptyState").style.display = "none";
+    }
+
+    $("pddLink").style.display = state.translatedKeyword ? "block" : "none";
+    if (state.translatedKeyword) {
+      $("pddLink").href = "https://mobile.yangkeduo.com/search_result.html?search_key=" + encodeURIComponent(state.translatedKeyword);
+    }
+  }
+
+  /* ---- file upload ---- */
+  function handleFile(file) {
+    if (!file || state.loading) return;
+    if (file.size > 4 * 1024 * 1024) {
+      state.error = "Фото слишком большое (максимум 4MB)";
+      render();
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      state.preview = reader.result;
+      $("dropEmpty").style.display = "none";
+      $("dropPreview").style.display = "block";
+      $("previewImg").src = reader.result;
+      $("previewTip").textContent = "Ищем аналоги...";
+
+      state.loading = true;
+      state.error = null;
+      state.apiErrors = [];
+      render();
+
+      var dataURL = reader.result.split(",")[1];
+      fetch("/api/recognize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataURL, mime: file.type, marketplaces: state.marketplaces }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (json) {
+          if (json.error) throw new Error(json.error);
+          state.results = json.results || [];
+          state.translatedKeyword = null;
+          if (json.errors && json.errors.length) state.apiErrors = json.errors;
+          if (state.results.length === 0) {
+            state.error = "Похожие товары не найдены, попробуй другое фото или поиск по названию";
+          }
+        })
+        .catch(function (e) {
+          state.error = e.message || "Не удалось распознать фото";
+        })
+        .finally(function () {
+          state.loading = false;
+          $("previewTip").textContent = "Нажми или перетащи другое фото";
+          render();
+        });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ---- keyword search ---- */
+  $("kwForm").onsubmit = function (e) {
+    e.preventDefault();
+    var kw = $("kwInput").value.trim();
+    if (!kw || state.loading) return;
+    state.loading = true;
+    state.error = null;
+    state.apiErrors = [];
+    render();
+    fetch("/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ keyword: kw, marketplaces: state.marketplaces }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (json.error) throw new Error(json.error);
+        state.results = json.results || [];
+        state.translatedKeyword = json.translatedKeyword || null;
+        if (json.errors && json.errors.length) state.apiErrors = json.errors;
+        if (state.results.length === 0) state.error = "Ничего не найдено, попробуй другой запрос";
+      })
+      .catch(function (e) { state.error = e.message; })
+      .finally(function () { state.loading = false; render(); });
+  };
+
+  /* ---- drop zone ---- */
+  var drop = $("drop");
+  var fi = $("fileInput");
+  drop.onclick = function () { fi.click(); };
+  drop.ondragover = function (e) { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = function () { drop.classList.remove("over"); };
+  drop.ondrop = function (e) {
+    e.preventDefault();
+    drop.classList.remove("over");
+    var f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  };
+  fi.onchange = function () {
+    var f = fi.files[0];
+    if (f) handleFile(f);
+    fi.value = "";
+  };
+
+  renderTabs();
+  render();
+})();
+</script>
+</body>
+</html>
