@@ -28,6 +28,9 @@
     font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     min-height: 100vh;
   }
+  .fade-in { opacity: 0; filter: blur(10px); transform: translateY(16px); animation: softIn 1.2s cubic-bezier(.22,1,.36,1) forwards; }
+  @keyframes softIn { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .fade-in { animation: none; opacity: 1; filter: none; transform: none; } }
   .topbar {
     height: 52px;
     display: flex;
@@ -236,20 +239,20 @@
 </head>
 <body>
 
-<div class="topbar">
+<div class="topbar fade-in" style="animation-delay:.05s">
   <div class="brand">KICK &amp; FIT <span>·</span> поиск с Китая</div>
   <a class="back" href="/">← На главную</a>
 </div>
 
 <main class="wrap">
-  <div class="title">
+  <div class="title fade-in" style="animation-delay:.15s">
     <h1>Kick &amp; Fit</h1>
     <p>Найди свой стиль с китайских маркетплейсов</p>
   </div>
 
   <div class="grid">
     <!-- left: upload + keyword -->
-    <div class="card">
+    <div class="card fade-in" style="animation-delay:.3s">
       <h2>📷 Загрузи фото одежды</h2>
 
       <div class="tabs" id="tabs"></div>
@@ -277,7 +280,7 @@
     </div>
 
     <!-- right: results -->
-    <div class="card">
+    <div class="card fade-in" style="animation-delay:.42s">
       <h2>🛍️ Результаты</h2>
       <div id="apiErrors"></div>
       <div id="loadingState" class="state" style="display:none">
@@ -292,7 +295,7 @@
     </div>
   </div>
 
-  <footer>
+  <footer class="fade-in" style="animation-delay:.6s">
     <a href="/">KICK &amp; FIT</a> · поиск и доставка товаров с 1688, Taobao и Pinduoduo
   </footer>
 </main>
