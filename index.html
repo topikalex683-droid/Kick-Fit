@@ -53,8 +53,10 @@ a, button{ transition:all .3s ease }
 .nav-logo img{ width:100%; height:100%; object-fit:cover; display:block; object-position:center }
 .nav-brand{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.22em; color:rgba(248,248,248,.60); display:none }
 @media(min-width:640px){ .nav-brand{ display:inline } }
-.nav-menu{ display:none; align-items:center; gap:24px }
-@media(min-width:1024px){ .nav-menu{ display:flex } }
+.nav-menu{ display:flex; align-items:center; gap:16px; min-width:0 }
+.nav-menu .nav-link{ white-space:nowrap }
+.nav-menu .short{ display:none }
+@media(min-width:1024px){ .nav-menu{ gap:24px } }
 .nav-geo{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em; color:rgba(248,248,248,.30); display:none }
 @media(min-width:640px){ .nav-geo{ display:block } }
 
@@ -110,6 +112,10 @@ a, button{ transition:all .3s ease }
   .nav{ height:48px; padding:0 16px }
   .nav-logo{ width:34px; height:34px }
   .nav-brand{ font-size:9px }
+  .nav-menu{ gap:10px }
+  .nav-menu .nav-link{ font-size:9px; letter-spacing:.12em }
+  .nav-menu .full{ display:none }
+  .nav-menu .short{ display:inline }
   .hero{ padding:28px 16px }
   .hero-line-text{ font-size:clamp(44px, 16vw, 90px) }
   .hero-kicker{ font-size:9px }
@@ -144,7 +150,7 @@ a, button{ transition:all .3s ease }
     </div>
     <div class="nav-menu">
       <a href="#catalog" class="nav-link" id="navCatalog">Каталог</a>
-      <a href="/search" class="nav-link">Поиск товара с Китая</a>
+      <a href="/search" class="nav-link"><span class="full">Поиск товара с Китая</span><span class="short">Поиск</span></a>
       <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank" rel="noopener" class="nav-link">Авито</a>
       <a href="https://t.me/KickFitStore" target="_blank" class="nav-link">Telegram</a>
     </div>
