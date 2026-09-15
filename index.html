@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{ box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; margin:0; padding:0 }
-html{ scroll-behavior:smooth }
 body{ background:#0A0A0A; color:#F8F8F8; font-family:'Manrope',sans-serif; overflow-x:hidden; min-height:100vh }
 
 .serif{ font-family:'Instrument Serif',serif }
@@ -220,7 +219,21 @@ fog(document.getElementById('line1'),"KICK",0.45);
 fog(document.getElementById('line2'),"&  FIT",0.78);
 setTimeout(function(){ var p=document.getElementById('plaque'); if(p){ p.classList.add('show'); } },600);
 
-/* Плавный скролл к якорям внутри страницы */
+/* Плавный скролл к якорям внутри страницы (своя анимация — работает везде) */
+function smoothScrollTo(targetY, duration){
+  var startY = window.pageYOffset;
+  var diff = targetY - startY;
+  if(Math.abs(diff) < 2) return;
+  var startTime = null;
+  function ease(t){ return 1 - Math.pow(1 - t, 3); }
+  function step(ts){
+    if(startTime === null) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    window.scrollTo(0, startY + diff * ease(p));
+    if(p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
   a.addEventListener('click', function(e){
     var id = a.getAttribute('href');
@@ -228,7 +241,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     var target = document.querySelector(id);
     if(target){
       e.preventDefault();
-      target.scrollIntoView({ behavior:'smooth', block:'start' });
+      var top = target.getBoundingClientRect().top + window.pageYOffset;
+      smoothScrollTo(top, 700);
       history.replaceState(null, "", id);
     }
   });
