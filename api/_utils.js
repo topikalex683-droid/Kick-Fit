@@ -328,18 +328,75 @@ async function tmGetDetail(productId) {
 
 async function uploadToPublicHost(buf, mime) {
   const ext = mime.includes("png") ? "png" : mime.includes("webp") ? "webp" : "jpg";
-  const form = new FormData();
-  form.append("file", new Blob([new Uint8Array(buf)], { type: mime }), `kikfit.${ext}`);
-  const resp = await fetch("https://0x0.st", {
-    method: "POST",
-    body: form,
-    signal: AbortSignal.timeout(60000),
-  });
-  const text = (await resp.text()).trim();
-  if (!resp.ok || !text.startsWith("http")) {
-    throw new Error(`Image host upload failed (${resp.status}): ${text.slice(0, 200)}`);
+  const blob = new Blob([new Uint8Array(buf)], { type: mime });
+  const fname = `kikfit-${Date.now()}.${ext}`;
+  const errors = [];
+
+  async function tryCatbox() {
+    const form = new FormData();
+    form.append("reqtype", "fileupload");
+    form.append("fileToUpload", blob, fname);
+    const resp = await fetch("https://catbox.moe/user/api.php", {
+      method: "POST",
+      body: form,
+      signal: AbortSignal.timeout(60000),
+    });
+    const text = (await resp.text()).trim();
+    if (!resp.ok || !/^https:\/\//.test(text) || /ERROR/i.test(text.slice(0, 60))) {
+      throw new Error(`catbox(${resp.status}): ${(text || "empty").slice(0, 140)}`);
+    }
+    return text;
   }
-  return text;
+
+  async function tryTelegraph() {
+    const form = new FormData();
+    form.append("file", blob, fname);
+    const resp = await fetch("https://telegra.ph/upload", {
+      method: "POST",
+      body: form,
+      signal: AbortSignal.timeout(60000),
+    });
+    const text = (await resp.text()).trim();
+    let src = null;
+    try {
+      const arr = JSON.parse(text);
+      if (Array.isArray(arr) && arr[0]) src = arr[0].src;
+    } catch {}
+    if (!resp.ok || !src || !/^\/[^"]+$/.test(src)) {
+      throw new Error(`telegra.ph(${resp.status}): ${(text || "empty").slice(0, 140)}`);
+    }
+    return `https://telegra.ph/${src.replace(/^\//, "")}`;
+  }
+
+  async function tryUguu() {
+    const form = new FormData();
+    form.append("files[]", blob, fname);
+    const resp = await fetch("https://uguu.se/upload.php", {
+      method: "POST",
+      body: form,
+      signal: AbortSignal.timeout(60000),
+    });
+    const text = (await resp.text()).trim();
+    let url = null;
+    try {
+      const data = JSON.parse(text);
+      url = data && data.files && Array.isArray(data.files) && data.files[0] ? data.files[0].url : null;
+    } catch {}
+    if (!resp.ok || !url) {
+      throw new Error(`uguu(${resp.status}): ${(text || "empty").slice(0, 140)}`);
+    }
+    return url;
+  }
+
+  const attempts = [tryCatbox, tryTelegraph, tryUguu];
+  for (const attempt of attempts) {
+    try {
+      return await attempt();
+    } catch (e) {
+      errors.push(e.message);
+    }
+  }
+  throw new Error(`Image host upload failed: ${errors.join(" | ")}`);
 }
 
 /* ---------------- Translation ---------------- */
