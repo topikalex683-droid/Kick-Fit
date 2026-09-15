@@ -144,7 +144,7 @@ a, button{ transition:all .3s ease }
       <span class="nav-brand">KICK & FIT</span>
     </div>
     <div class="nav-menu">
-      <a href="#catalog" class="nav-link">Каталог</a>
+      <a href="#catalog" class="nav-link" id="navCatalog">Каталог</a>
       <a href="https://www.avito.ru/brands/2faa09f6918d474618dff68c196d67bd/all?sellerId=6311df999e29bfba01b44474c898264f" target="_blank" rel="noopener" class="nav-link">Авито</a>
       <a href="https://t.me/KickFitStore" target="_blank" class="nav-link">Telegram</a>
     </div>
@@ -219,6 +219,20 @@ function fog(el, text, base){
 fog(document.getElementById('line1'),"KICK",0.45);
 fog(document.getElementById('line2'),"&  FIT",0.78);
 setTimeout(function(){ var p=document.getElementById('plaque'); if(p){ p.classList.add('show'); } },600);
+
+/* Плавный скролл к якорям внутри страницы */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var id = a.getAttribute('href');
+    if(id.length < 2) return;
+    var target = document.querySelector(id);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({ behavior:'smooth', block:'start' });
+      history.replaceState(null, "", id);
+    }
+  });
+});
 </script>
 </body>
 </html>
