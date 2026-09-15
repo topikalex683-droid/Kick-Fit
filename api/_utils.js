@@ -37,6 +37,10 @@ async function nexRun(slug, body) {
     signal: AbortSignal.timeout(120000),
   });
   const data = jsonOrThrow(await resp.text(), resp.status, "Nexscope");
+  const code = data?.code ?? data?.errcode;
+  if (typeof code === "number" && code !== 0 && code !== 200) {
+    throw new Error(`Nexscope: ${data?.msg || data?.message || data?.statusMsg || String(code)}`);
+  }
   return data;
 }
 
@@ -230,7 +234,12 @@ async function tmapiGet(path, params) {
     headers: { apikey: tmapiToken() },
     signal: AbortSignal.timeout(90000),
   });
-  return jsonOrThrow(await resp.text(), resp.status, "TMAPI");
+  const data = jsonOrThrow(await resp.text(), resp.status, "TMAPI");
+  const code = data?.code ?? data?.errcode ?? data?.status;
+  if (typeof code === "number" && code !== 0 && code !== 200 && code !== 1) {
+    throw new Error(`TMAPI: ${data?.msg || data?.message || data?.error || String(code)}`);
+  }
+  return data;
 }
 
 function tmPickId(p) {
