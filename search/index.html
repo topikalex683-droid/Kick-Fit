@@ -3,218 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kik FIT — Поиск товара с Китая</title>
+<title>KICK &amp; FIT — поиск товара с Китая</title>
 <meta name="description" content="Поиск товаров на 1688 и Taobao по фото или названию, расчёт цены с доставкой.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F5F5F4;
-    --fg: #1C1917;
-    --muted: #78716C;
-    --border: #E7E5E4;
+    --bg: #0A0A0A;
+    --fg: #F8F8F8;
+    --muted: rgba(248,248,248,.5);
+    --muted-2: rgba(248,248,248,.32);
+    --border: rgba(248,248,248,.08);
+    --card: #141414;
     --accent: #E8622A;
     --accent-dark: #D4561D;
-    --card: #FFFFFF;
     --taobao: #FF5000;
-    --chip-bg: #F5F5F4;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   html, body { height: 100%; }
   body {
     background: var(--bg);
     color: var(--fg);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
+    font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
   }
   .topbar {
-    background: #1C1917;
-    color: #fff;
-    padding: 0.75rem 1rem;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    padding: 0 24px;
+    border-bottom: 1px solid rgba(248,248,248,.07);
   }
-  .topbar .brand { font-weight: 800; letter-spacing: 0.02em; font-size: 1.05rem; }
-  .topbar .brand span { color: #E8622A; }
+  @media (min-width: 640px) { .topbar { padding: 0 32px; } }
+  .topbar .brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .18em;
+    color: rgba(248,248,248,.72);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar .brand span { color: var(--accent); }
   .topbar a.back {
-    color: #E7E5E4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .08em;
+    color: rgba(248,248,248,.55);
     text-decoration: none;
-    font-size: 0.9rem;
-    padding: 0.3rem 0.75rem;
-    border: 1px solid #44403C;
-    border-radius: 9999px;
-    transition: background 0.15s;
+    flex: none;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(248,248,248,.18);
+    border-radius: 999px;
+    transition: background .2s, border-color .2s, color .2s;
   }
-  .topbar a.back:hover { background: #292524; color: #fff; }
-  .wrap { max-width: 64rem; margin: 0 auto; padding: 3rem 1rem; }
-  .title h1 { font-size: 2.25rem; font-weight: 800; color: #1C1917; margin-bottom: 0.5rem; }
-  .title p { font-size: 1.125rem; color: #78716C; margin-bottom: 2rem; }
-  .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-  @media (min-width: 1024px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .topbar a.back:hover { background: rgba(248,248,248,.10); border-color: rgba(248,248,248,.35); color: #F8F8F8; }
+  .wrap { max-width: 64rem; margin: 0 auto; padding: 3rem 1rem 2rem; }
+  @media (min-width: 640px) { .wrap { padding: 3.5rem 2rem 2.5rem; } }
+  .title h1 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(44px, 8vw, 72px);
+    line-height: .95;
+    letter-spacing: -.02em;
+    color: #F8F8F8;
+    margin-bottom: 0.75rem;
+  }
+  .title p { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .04em; color: rgba(248,248,248,.55); margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 1024px) { .grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
   .card {
-    background: #fff;
-    border-radius: 1rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    border: 1px solid #E7E5E4;
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
     padding: 1.5rem;
   }
-  .card h2 { font-size: 1.25rem; font-weight: 600; color: #1C1917; margin-bottom: 1rem; }
+  .card h2 { font-size: 1.25rem; font-weight: 600; color: #F8F8F8; margin-bottom: 1rem; }
   .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
   .tab {
     padding: 0.375rem 1rem;
     border-radius: 9999px;
-    border: 1px solid transparent;
+    border: 1px solid rgba(248,248,248,.12);
     font-size: 0.875rem;
     font-weight: 500;
+    font-family: inherit;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    background: #F5F5F4;
-    color: #78716C;
+    transition: background .2s, color .2s, border-color .2s;
+    background: rgba(248,248,248,.08);
+    color: rgba(248,248,248,.55);
   }
-  .tab:hover { background: #E7E5E4; }
-  .tab.active { background: #1C1917; color: #fff; }
+  .tab:hover { background: rgba(248,248,248,.14); color: #F8F8F8; }
+  .tab.active { background: #F8F8F8; color: #0A0A0A; border-color: #F8F8F8; }
   .drop {
-    border: 2px dashed #E7E5E4;
-    border-radius: 0.75rem;
+    border: 1.5px dashed rgba(248,248,248,.22);
+    border-radius: 16px;
     padding: 2rem;
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color .2s, background .2s;
   }
-  .drop:hover, .drop.over { border-color: #E8622A; background: #FFF7ED; }
+  .drop:hover, .drop.over { border-color: var(--accent); background: rgba(232,98,42,.07); }
   .drop .icon { font-size: 2.25rem; margin-bottom: 0.75rem; }
-  .drop .main { color: #1C1917; font-weight: 500; margin-bottom: 0.25rem; }
-  .drop .sub { font-size: 0.875rem; color: #78716C; }
-  .drop img.preview { max-height: 16rem; max-width: 100%; border-radius: 0.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: block; margin: 0 auto; }
-  .drop .tip { font-size: 0.875rem; color: #78716C; margin-top: 0.75rem; }
-  .kw-label { display: block; font-size: 0.875rem; font-weight: 500; color: #1C1917; margin: 1rem 0 0.5rem; }
+  .drop .main { color: #F8F8F8; font-weight: 500; margin-bottom: 0.25rem; }
+  .drop .sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .04em; color: rgba(248,248,248,.5); }
+  .drop img.preview { max-height: 16rem; max-width: 100%; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.4); display: block; margin: 0 auto; }
+  .drop .tip { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(248,248,248,.5); margin-top: 0.75rem; }
+  .kw-label { display: block; font-size: 0.875rem; font-weight: 500; color: #F8F8F8; margin: 1.25rem 0 0.5rem; }
   .kw-form { display: flex; gap: 0.5rem; }
   .kw-form input {
     flex: 1;
+    min-width: 0;
     padding: 0.625rem 1rem;
-    border: 1px solid #E7E5E4;
-    border-radius: 0.5rem;
-    background: #fff;
-    color: #1C1917;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(248,248,248,.06);
+    color: #F8F8F8;
     font-size: 0.875rem;
     font-family: inherit;
     outline: none;
-    min-width: 0;
   }
-  .kw-form input::placeholder { color: #A8A29E; }
-  .kw-form input:focus { border-color: transparent; box-shadow: 0 0 0 2px #E8622A; }
+  .kw-form input::placeholder { color: rgba(248,248,248,.35); }
+  .kw-form input:focus { border-color: var(--accent); }
   .btn {
+    flex: none;
     padding: 0.625rem 1.25rem;
-    border-radius: 0.5rem;
+    border-radius: 999px;
     border: none;
-    background: #E8622A;
+    background: var(--accent);
     color: #fff;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.875rem;
-    font-family: inherit;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .05em;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background .2s;
   }
-  .btn:hover { background: #D4561D; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn:hover { background: var(--accent-dark); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .err {
     margin-top: 1rem;
-    padding: 0.75rem;
-    background: #FEF2F2;
-    border: 1px solid #FECACA;
-    border-radius: 0.5rem;
-    color: #B91C1C;
+    padding: 0.75rem 1rem;
+    background: rgba(220,38,38,.14);
+    border: 1px solid rgba(248,113,113,.35);
+    border-radius: 12px;
+    color: #FCA5A5;
     font-size: 0.875rem;
   }
   .api-err {
-    margin-bottom: 0.75rem;
-    padding: 0.75rem;
-    background: #FFFBEB;
-    border: 1px solid #FDE68A;
-    border-radius: 0.5rem;
-    color: #92400E;
+    padding: 0.75rem 1rem;
+    background: rgba(217,119,6,.15);
+    border: 1px solid rgba(252,211,77,.35);
+    border-radius: 12px;
+    color: #FCD34D;
     font-size: 0.75rem;
+    margin-bottom: 0.75rem;
   }
-  .state { padding: 3rem 0; text-align: center; color: #78716C; }
+  .state { padding: 3rem 0; text-align: center; color: rgba(248,248,248,.45); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
   .spinner {
     width: 2rem; height: 2rem; border-radius: 9999px;
-    border: 2px solid transparent; border-bottom-color: #E8622A;
+    border: 2px solid rgba(248,248,248,.15); border-bottom-color: var(--accent);
     animation: spin 0.8s linear infinite;
     margin: 0 auto 1rem;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .result {
     display: flex; gap: 1rem; padding: 0.75rem;
-    border: 1px solid #E7E5E4; border-radius: 0.75rem;
-    background: #fff; cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    border: 1px solid var(--border); border-radius: 14px;
+    background: rgba(248,248,248,.04); cursor: pointer;
+    transition: border-color .15s, background .15s;
     margin-bottom: 0.75rem;
   }
-  .result:hover { border-color: #E8622A; }
-  .result.selected { border-color: #E8622A; background: #FFF7ED; }
-  .result img { width: 5rem; height: 5rem; object-fit: cover; border-radius: 0.5rem; flex: none; }
+  .result:hover { border-color: var(--accent); }
+  .result.selected { border-color: var(--accent); background: rgba(232,98,42,.12); }
+  .result img { width: 5rem; height: 5rem; object-fit: cover; border-radius: 10px; flex: none; }
   .result .body { flex: 1; min-width: 0; }
   .result .head { display: flex; align-items: center; gap: 0.5rem; }
   .badge {
-    font-size: 0.625rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 0.125rem 0.375rem; border-radius: 0.25rem; flex: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 0.125rem 0.375rem; border-radius: 6px; flex: none;
   }
-  .badge.t1688 { background: rgba(232,98,42,0.11); color: #E8622A; }
-  .badge.taobao { background: rgba(255,80,0,0.11); color: #FF5000; }
-  .result .ttl { font-size: 0.875rem; font-weight: 500; color: #1C1917; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-  .result .seller { font-size: 0.75rem; color: #78716C; margin-top: 0.125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .badge.t1688 { background: rgba(232,98,42,.18); color: #FD9A63; }
+  .badge.taobao { background: rgba(255,80,0,.18); color: #FF9C75; }
+  .result .ttl { font-size: 0.875rem; font-weight: 500; color: #F8F8F8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .result .seller { font-size: 0.75rem; color: var(--muted); margin-top: 0.125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .result .meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; }
-  .result .price { font-size: 1.125rem; font-weight: 700; color: #E8622A; }
-  .result .moq { font-size: 0.75rem; color: #78716C; }
-  .calc { margin-top: 1rem; padding: 1rem; background: #F5F5F4; border: 1px solid #E7E5E4; border-radius: 0.75rem; }
-  .calc h4 { font-weight: 600; color: #1C1917; margin-bottom: 0.75rem; }
+  .result .price { font-size: 1.125rem; font-weight: 700; color: var(--accent); }
+  .result .moq { font-size: 0.75rem; color: var(--muted); }
+  .calc { margin-top: 1rem; padding: 1.25rem; background: rgba(248,248,248,.03); border: 1px solid var(--border); border-radius: 14px; }
+  .calc h4 { font-weight: 600; color: #F8F8F8; margin-bottom: 0.9rem; }
   .calc .row { display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.75rem; }
-  .calc .row .k { color: #78716C; }
-  .calc .row .v { font-weight: 500; color: #1C1917; }
+  .calc .row .k { color: var(--muted); }
+  .calc .row .v { font-weight: 500; color: #F8F8F8; }
   .calc .row input {
     width: 3.5rem; padding: 0.25rem 0.5rem;
-    border: 1px solid #E7E5E4; border-radius: 0.375rem;
-    text-align: center; color: #1C1917; font-size: 0.875rem; font-family: inherit;
+    border: 1px solid var(--border); border-radius: 8px;
+    text-align: center; color: #F8F8F8; font-size: 0.875rem; font-family: inherit;
+    background: rgba(248,248,248,.06);
   }
-  .calc .total { border-top: 1px solid #E7E5E4; padding-top: 0.75rem; display: flex; align-items: center; justify-content: space-between; }
-  .calc .total .lbl { font-weight: 600; color: #1C1917; }
-  .calc .total .val { font-size: 1.25rem; font-weight: 700; color: #E8622A; }
+  .calc .total { border-top: 1px solid var(--border); padding-top: 0.9rem; display: flex; align-items: center; justify-content: space-between; }
+  .calc .total .lbl { font-weight: 600; color: #F8F8F8; }
+  .calc .total .val { font-size: 1.35rem; font-weight: 700; color: var(--accent); }
   .btn-dark {
     display: block; width: 100%; text-align: center;
-    padding: 0.5rem 1rem; margin-top: 0.75rem;
-    background: #1C1917; color: #fff; border: none; border-radius: 0.5rem;
-    font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: background 0.15s; font-family: inherit;
+    padding: 0.6rem 1rem; margin-top: 0.9rem;
+    background: #F8F8F8; color: #0A0A0A; border: none; border-radius: 999px;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: .04em; cursor: pointer; font-family: inherit;
+    transition: background .2s;
   }
-  .btn-dark:hover { background: #000; }
+  .btn-dark:hover { background: #fff; }
   .btn-accent {
     display: block; width: 100%; text-align: center; text-decoration: none;
-    padding: 0.5rem 1rem; margin-top: 0.5rem;
-    background: #E8622A; color: #fff; border: none; border-radius: 0.5rem;
-    font-size: 0.875rem; font-weight: 500; transition: background 0.15s;
+    padding: 0.6rem 1rem; margin-top: 0.5rem;
+    background: var(--accent); color: #fff; border: none; border-radius: 999px;
+    font-size: 0.85rem; font-weight: 600; transition: background .2s;
   }
-  .btn-accent:hover { background: #D4561D; }
+  .btn-accent:hover { background: var(--accent-dark); }
   .pdd {
-    display: block; text-align: center; margin-top: 1rem;
-    padding: 0.625rem 1rem; border-radius: 0.5rem;
-    border: 1px solid #E8622A; color: #E8622A;
-    font-size: 0.875rem; font-weight: 500; text-decoration: none;
-    transition: background 0.15s;
+    display: block; text-align: center; margin-top: 1.25rem;
+    padding: 0.625rem 1rem; border-radius: 999px;
+    border: 1px solid var(--accent); color: var(--accent);
+    font-weight: 500; font-size: 0.875rem; text-decoration: none;
+    transition: background .2s;
   }
-  .pdd:hover { background: #FFF7ED; }
-  footer { text-align: center; padding: 2rem 1rem 3rem; color: #A8A29E; font-size: 0.8rem; }
-  footer a { color: #E8622A; text-decoration: none; }
+  .pdd:hover { background: rgba(232,98,42,.12); }
+  footer { text-align: center; padding: 2rem 1rem 3rem; color: rgba(248,248,248,.3); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .08em; }
+  footer a { color: var(--accent); text-decoration: none; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand">kik FIT <span>·</span> поиск с Китая</div>
+  <div class="brand">KICK &amp; FIT <span>·</span> поиск с Китая</div>
   <a class="back" href="/">← На главную</a>
 </div>
 
 <main class="wrap">
   <div class="title">
-    <h1>kik FIT</h1>
+    <h1>Kick &amp; Fit</h1>
     <p>Найди свой стиль с китайских маркетплейсов</p>
   </div>
 
@@ -264,7 +293,7 @@
   </div>
 
   <footer>
-    <a href="/">kik.fitness</a> · поиск и доставка товаров с 1688, Taobao и Pinduoduo
+    <a href="/">KICK &amp; FIT</a> · поиск и доставка товаров с 1688, Taobao и Pinduoduo
   </footer>
 </main>
 
@@ -417,6 +446,7 @@
     ae.innerHTML = "";
     state.apiErrors.forEach(function (m) {
       var d = document.createElement("div");
+      d.className = "api-err";
       d.textContent = m;
       ae.appendChild(d);
     });
